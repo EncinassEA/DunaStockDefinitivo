@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <!-- Campo de Producto -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre del Producto"
+        android:textColor="#7F8C8D"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etDialogProducto"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Ej. 5 Cajas de Camisas"
+        android:backgroundTint="#3498DB"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Campo de Ubicación -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ubicación en Almacén"
+        android:textColor="#7F8C8D"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etDialogUbicacion"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Ej. Pasillo 4, Estante B"
+        android:backgroundTint="#3498DB"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Campo de Asignación -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Asignar a (Operador)"
+        android:textColor="#7F8C8D"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etDialogAsignado"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Ej. Carlos o Osvaldo"
+        android:backgroundTint="#3498DB" />
+
+</LinearLayout>
