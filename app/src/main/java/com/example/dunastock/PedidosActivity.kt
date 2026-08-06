@@ -2,13 +2,23 @@ package com.example.dunastock
 
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
-import com.android.volley.toolbox.*
+import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONObject
 
 class PedidosActivity : AppCompatActivity() {
@@ -55,7 +65,6 @@ class PedidosActivity : AppCompatActivity() {
         val request = JsonArrayRequest(Request.Method.GET, API_URL, null,
             { response ->
                 listaPedidos.clear()
-                listaPedidos.clear()
                 for (i in 0 until response.length()) {
                     val obj = response.getJSONObject(i)
                     val estadoActual = obj.getString("estado").lowercase()
@@ -68,7 +77,11 @@ class PedidosActivity : AppCompatActivity() {
                             obj.getString("ubicacion_almacen"),
                             obj.getString("estado"),
                             obj.getString("asignado_a"),
-                            obj.getString("fecha_ingreso")
+                            obj.getString("fecha_ingreso"),
+                            // Agregamos esto para que lea los nuevos datos de MockAPI
+                            obj.optString("cantidad", "N/A"),
+                            obj.optString("codigo", "N/A"),
+                            obj.optString("notas", "Sin notas")
                         ))
                     }
                 }
@@ -77,43 +90,68 @@ class PedidosActivity : AppCompatActivity() {
         queue.add(request)
     }
 
+
     private fun mostrarDialogoCrear() {
         // Inflamos nuestro nuevo diseño personalizado
-        val inflater = layoutInflater
-        val vistaDialogo = inflater.inflate(R.layout.dialog_nuevo_pedido, null)
+        val vistaDialogo = layoutInflater.inflate(R.layout.dialog_nuevo_pedido, null)
 
-        // Conectamos los EditText del diseño
-        val inputProd = vistaDialogo.findViewById<EditText>(R.id.etDialogProducto)
-        val inputUbic = vistaDialogo.findViewById<EditText>(R.id.etDialogUbicacion)
-        val inputAsignado = vistaDialogo.findViewById<EditText>(R.id.etDialogAsignado)
+        // Conectamos los TextInputEditText del nuevo diseño
+        val inputProd = vistaDialogo.findViewById<TextInputEditText>(R.id.etProducto)
+        val inputCantidad = vistaDialogo.findViewById<TextInputEditText>(R.id.etCantidad)
+        val inputCodigo = vistaDialogo.findViewById<TextInputEditText>(R.id.etCodigo)
+        val inputUbic = vistaDialogo.findViewById<TextInputEditText>(R.id.etUbicacion)
+        val inputNotas = vistaDialogo.findViewById<TextInputEditText>(R.id.etNotas)
+        val tvOperador = vistaDialogo.findViewById<AutoCompleteTextView>(R.id.tvOperadorDesplegable)
 
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("📦 Crear Nuevo Pedido")
-        builder.setView(vistaDialogo)
+        // Configurar el menú desplegable con el equipo
+        val opcionesOperador = arrayOf("Osvaldo", "Carlos Melendrez", "Eclud", "Alan")
+        val adapterOperadores = ArrayAdapter(this, android.R.layout.simple_list_item_1, opcionesOperador)
+        tvOperador.setAdapter(adapterOperadores)
+
+        // Usamos MaterialAlertDialogBuilder para un diseño más limpio
+        MaterialAlertDialogBuilder(this)
+            .setView(vistaDialogo)
             .setPositiveButton("Crear") { _, _ ->
                 val productoTxt = inputProd.text.toString().trim()
+                val cantidadTxt = inputCantidad.text.toString().trim()
+                val codigoTxt = inputCodigo.text.toString().trim()
                 val ubicacionTxt = inputUbic.text.toString().trim()
-                var asignadoTxt = inputAsignado.text.toString().trim()
+                val notasTxt = inputNotas.text.toString().trim()
+                var asignadoTxt = tvOperador.text.toString().trim()
 
-                // Si lo dejan vacío, le ponemos algo por defecto
-                if (asignadoTxt.isEmpty()) asignadoTxt = "Por asignar"
+                // Validar que al menos pongan el producto y la ubicación
+                if (productoTxt.isNotEmpty() && ubicacionTxt.isNotEmpty()) {
 
-                // Obtener la fecha real de hoy
-                val formatoFecha = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-                val fechaHoy = formatoFecha.format(java.util.Date())
+                    if (asignadoTxt.isEmpty()) asignadoTxt = "Por asignar"
 
-                val json = JSONObject().apply {
-                    put("producto", productoTxt)
-                    put("ubicacion_almacen", ubicacionTxt)
-                    put("estado", "pendiente") // Siempre nace como pendiente
-                    put("asignado_a", asignadoTxt)
-                    put("fecha_ingreso", fechaHoy) // Ahora guarda el día real
+                    // Obtener la fecha real de hoy
+                    val formatoFecha = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+                    val fechaHoy = formatoFecha.format(java.util.Date())
+
+                    // Empaquetamos todo, incluyendo los campos nuevos para MockAPI
+                    val json = JSONObject().apply {
+                        put("producto", productoTxt)
+                        put("cantidad", cantidadTxt)
+                        put("codigo", codigoTxt)
+                        put("ubicacion_almacen", ubicacionTxt)
+                        put("notas", notasTxt)
+                        put("estado", "pendiente")
+                        put("asignado_a", asignadoTxt)
+                        put("fecha_ingreso", fechaHoy)
+                    }
+
+                    Volley.newRequestQueue(this).add(
+                        JsonObjectRequest(Request.Method.POST, API_URL, json,
+                            {
+                                Toast.makeText(this, "Pedido Creado", Toast.LENGTH_SHORT).show()
+                                cargarPedidos()
+                            },
+                            { Toast.makeText(this, "Error al crear", Toast.LENGTH_SHORT).show() }
+                        )
+                    )
+                } else {
+                    Toast.makeText(this, "Producto y Ubicación son obligatorios", Toast.LENGTH_SHORT).show()
                 }
-
-                Volley.newRequestQueue(this).add(
-                    JsonObjectRequest(Request.Method.POST, API_URL, json,
-                        { cargarPedidos() }, null)
-                )
             }
             .setNegativeButton("Cancelar", null)
             .show()

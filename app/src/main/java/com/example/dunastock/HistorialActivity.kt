@@ -63,7 +63,11 @@ class HistorialActivity : AppCompatActivity() {
                             obj.getString("ubicacion_almacen"),
                             obj.getString("estado"),
                             obj.getString("asignado_a"),
-                            obj.getString("fecha_ingreso")
+                            obj.getString("fecha_ingreso"),
+                            // ¡AQUÍ ESTÁ LA MAGIA QUE FALTABA EN EL HISTORIAL!
+                            obj.optString("cantidad", "N/A"),
+                            obj.optString("codigo", "N/A"),
+                            obj.optString("notas", "Sin notas")
                         ))
                     }
                 }

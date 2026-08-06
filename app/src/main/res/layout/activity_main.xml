@@ -9,7 +9,17 @@
     android:gravity="center"
     android:background="#F4F6F9">
 
-    <!-- Títulos -->
+
+    <ImageView
+        android:id="@+id/logoDunaStock"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo_dunastock"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Logo de DunaStock" />
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +37,7 @@
         android:textColor="#718096"
         android:layout_marginBottom="32dp"/>
 
-    <!-- Tarjeta del Formulario -->
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,14 +62,14 @@
                 android:background="@android:color/transparent"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Línea divisoria -->
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#E2E8F0"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Campo de Contraseña -->
+
             <EditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
@@ -69,7 +79,7 @@
                 android:background="@android:color/transparent"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Botón -->
+
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
@@ -82,7 +92,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Enlace a Registro -->
+
     <TextView
         android:id="@+id/tvCrearCuenta"
         android:layout_width="wrap_content"

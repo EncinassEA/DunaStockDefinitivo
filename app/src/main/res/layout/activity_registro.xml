@@ -9,6 +9,18 @@
     android:gravity="center"
     android:background="#F4F6F9">
 
+
+
+    <ImageView
+        android:id="@+id/logoDunaStock"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo_dunastock"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Logo de DunaStock" />
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

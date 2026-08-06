@@ -2,13 +2,13 @@ package com.example.dunastock
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,6 +19,8 @@ import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -118,38 +120,44 @@ class AdminUsuariosActivity : AppCompatActivity() {
         queue.add(request)
     }
 
+    // ==========================================
+    // NUEVO DIÁLOGO MODERNO DE EDICIÓN
+    // ==========================================
     private fun mostrarDialogoEditar(usuario: Usuario) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Editar Usuario")
+        // 1. Inflamos el nuevo diseño personalizado
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_editar_usuario, null)
+        val etNombreEditar = dialogView.findViewById<TextInputEditText>(R.id.etNombreEditar)
+        val tvRolDesplegable = dialogView.findViewById<AutoCompleteTextView>(R.id.tvRolDesplegable)
 
-        // Creamos un contenedor con dos campos de texto (Nombre y Rol)
-        val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.VERTICAL
-        layout.setPadding(50, 20, 50, 20)
+        // 2. Pre-llenamos el nombre actual del usuario
+        etNombreEditar.setText(usuario.nombre)
 
-        val inputNombre = EditText(this)
-        inputNombre.hint = "Nombre"
-        inputNombre.setText(usuario.nombre)
-        layout.addView(inputNombre)
+        // 3. Configuramos las opciones del Dropdown
+        val opcionesRol = arrayOf("Administrador", "Operador")
+        val adapterRoles = ArrayAdapter(this, android.R.layout.simple_list_item_1, opcionesRol)
+        tvRolDesplegable.setAdapter(adapterRoles)
 
-        val inputRol = EditText(this)
-        inputRol.hint = "Rol (administrador o operador)"
-        inputRol.setText(usuario.rol)
-        layout.addView(inputRol)
+        // Pre-seleccionamos el rol actual formateado (con mayúscula inicial para que coincida visualmente)
+        val rolActualCapitalizado = usuario.rol.replaceFirstChar { it.uppercase() }
+        tvRolDesplegable.setText(rolActualCapitalizado, false)
 
-        builder.setView(layout)
+        // 4. Construimos el diálogo moderno
+        MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .setPositiveButton("Guardar") { dialog, _ ->
+                val nuevoNombre = etNombreEditar.text.toString().trim()
+                val nuevoRol = tvRolDesplegable.text.toString().trim().lowercase() // Lo mandamos en minúscula a la API
 
-        builder.setPositiveButton("Guardar") { dialog, _ ->
-            val nuevoNombre = inputNombre.text.toString().trim()
-            val nuevoRol = inputRol.text.toString().trim().lowercase()
-
-            if(nuevoNombre.isNotEmpty() && nuevoRol.isNotEmpty()) {
-                actualizarUsuarioEnApi(usuario, nuevoNombre, nuevoRol)
+                if (nuevoNombre.isNotEmpty() && nuevoRol.isNotEmpty()) {
+                    actualizarUsuarioEnApi(usuario, nuevoNombre, nuevoRol)
+                } else {
+                    Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
-
-        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
-        builder.show()
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun actualizarUsuarioEnApi(usuario: Usuario, nuevoNombre: String, nuevoRol: String) {

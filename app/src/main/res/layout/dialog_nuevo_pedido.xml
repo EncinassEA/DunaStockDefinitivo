@@ -1,56 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp"
     android:background="#FFFFFF">
 
-    <!-- Campo de Producto -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nombre del Producto"
-        android:textColor="#7F8C8D"
-        android:textSize="12sp"
-        android:textStyle="bold" />
-    <EditText
-        android:id="@+id/etDialogProducto"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Ej. 5 Cajas de Camisas"
-        android:backgroundTint="#3498DB"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Campo de Ubicación -->
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ubicación en Almacén"
-        android:textColor="#7F8C8D"
-        android:textSize="12sp"
-        android:textStyle="bold" />
-    <EditText
-        android:id="@+id/etDialogUbicacion"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Ej. Pasillo 4, Estante B"
-        android:backgroundTint="#3498DB"
-        android:layout_marginBottom="16dp" />
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <!-- Campo de Asignación -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Asignar a (Operador)"
-        android:textColor="#7F8C8D"
-        android:textSize="12sp"
-        android:textStyle="bold" />
-    <EditText
-        android:id="@+id/etDialogAsignado"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Ej. Carlos o Osvaldo"
-        android:backgroundTint="#3498DB" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📦 Crear Nuevo Pedido"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#2C3E50"
+            android:layout_marginBottom="24dp" />
 
-</LinearLayout>
+        <!-- 1. Nombre del Producto -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre del Producto"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="#0B1A30">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etProducto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 2. Fila Dividida: Cantidad y Código/SKU -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
+            android:baselineAligned="false">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Cantidad"
+                android:layout_marginEnd="8dp"
+                app:boxStrokeColor="#0B1A30">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCantidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Código / SKU"
+                android:layout_marginStart="8dp"
+                app:boxStrokeColor="#0B1A30">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCodigo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapCharacters" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- 3. Ubicación -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ubicación en Almacén"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="#0B1A30">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 4. Notas / Descripción -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Notas o Descripción (Opcional)"
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="#0B1A30">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNotas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:lines="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 5. Operador Asignado (Menú Desplegable) -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Asignar a (Operador)"
+            app:boxStrokeColor="#0B1A30">
+            <AutoCompleteTextView
+                android:id="@+id/tvOperadorDesplegable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:editable="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+</ScrollView>
