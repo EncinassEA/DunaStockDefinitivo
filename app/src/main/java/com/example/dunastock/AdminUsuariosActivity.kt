@@ -32,7 +32,7 @@ class AdminUsuariosActivity : AppCompatActivity() {
     private val listaUsuarios = mutableListOf<Usuario>()
 
     // Tu enlace de MockAPI
-    private val API_URL = "https://6a388f6a64a2d8269222907e.mockapi.io/usuarios"
+    private val API_URL = "https://dunastock-api.onrender.com/api/usuarios"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

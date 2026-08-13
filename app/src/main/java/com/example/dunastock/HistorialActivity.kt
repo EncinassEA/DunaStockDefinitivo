@@ -15,7 +15,7 @@ class HistorialActivity : AppCompatActivity() {
     private lateinit var rvHistorial: RecyclerView
     private lateinit var adapter: PedidoAdapter
     private val listaHistorial = mutableListOf<Pedido>()
-    private val API_URL = "https://6a388f6a64a2d8269222907e.mockapi.io/pedidos"
+    private val API_URL = "https://dunastock-api.onrender.com/api/pedidos"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

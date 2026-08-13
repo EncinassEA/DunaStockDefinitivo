@@ -22,7 +22,7 @@ class RegistroActivity : AppCompatActivity() {
     private lateinit var btnRegistrar: Button
     private lateinit var tvVolverLogin: TextView
 
-    private val API_URL = "https://6a388f6a64a2d8269222907e.mockapi.io/usuarios"
+    private val API_URL = "https://dunastock-api.onrender.com/api/usuarios"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

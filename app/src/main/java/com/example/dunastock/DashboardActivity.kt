@@ -28,7 +28,7 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var tvStatProceso: TextView
     private lateinit var tvStatCompletados: TextView
 
-    private val PEDIDOS_API_URL = "https://6a388f6a64a2d8269222907e.mockapi.io/pedidos"
+    private val PEDIDOS_API_URL = "https://dunastock-api.onrender.com/api/pedidos"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
