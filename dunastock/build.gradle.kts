@@ -52,4 +52,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation("androidx.wear:wear:1.3.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 }

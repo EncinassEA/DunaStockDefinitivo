@@ -21,10 +21,11 @@ class MainActivity : Activity() {
 
     // Variables para vigilar los cambios
     private var totalPedidosActuales = 0
-    private val handler = Handler(Looper.getMainLooper())
-    private val intervaloDeConsulta = 3000L // 3 segundos
 
-    // Este es el "vigilante" que se ejecuta cada 3 segundos
+    // Configuramos el temporizador para consultar en segundo plano (cada 15 seg)
+    private val handler = Handler(Looper.getMainLooper())
+    private val intervaloDeConsulta = 15000L
+
     private val vigilanteAPI = object : Runnable {
         override fun run() {
             revisarNuevosPedidosReal()
@@ -36,7 +37,7 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Arrancamos el vigilante para que empiece a revisar MockAPI
+        // Arrancamos el ciclo de consultas continuas al abrir la app
         handler.post(vigilanteAPI)
 
         // Botón para ir a la lista de órdenes
@@ -49,32 +50,44 @@ class MainActivity : Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Apagamos el vigilante si se cierra la app para no gastar memoria
+        // Apagamos el vigilante al salir para proteger la batería del reloj
         handler.removeCallbacks(vigilanteAPI)
     }
 
     private fun revisarNuevosPedidosReal() {
         thread {
             try {
-                // Leemos MockAPI
-                val respuesta = URL("https://6a388f6a64a2d8269222907e.mockapi.io/pedidos").readText()
+                val respuesta = URL("https://dunastock-api.onrender.com/api/pedidos").readText()
                 val arregloPedidos = JSONArray(respuesta)
                 val totalEnLaNube = arregloPedidos.length()
 
-                runOnUiThread {
-                    // 1. Actualizamos el número rojo en la pantalla siempre
-                    val tvNuevas = findViewById<TextView>(R.id.tvNuevas)
-                    tvNuevas?.text = totalEnLaNube.toString()
+                var nuevas = 0
+                var proceso = 0
+                var completadas = 0
 
-                    // 2. Lógica para la notificación
-                    if (totalPedidosActuales == 0) {
-                        // Es la primera vez que abre la app, solo guardamos cuántos hay (ej. 3)
-                        totalPedidosActuales = totalEnLaNube
-                    } else if (totalEnLaNube > totalPedidosActuales) {
-                        // ¡MAGIA REAL! El número en MockAPI subió (ej. de 3 a 4).
-                        totalPedidosActuales = totalEnLaNube
-                        lanzarNotificacionReal() // Disparamos la alerta
+                // Clasificamos cada pedido según su estado real en la API
+                for (i in 0 until arregloPedidos.length()) {
+                    val obj = arregloPedidos.getJSONObject(i)
+                    val estado = obj.optString("estado", "nueva").lowercase()
+
+                    when {
+                        estado.contains("proceso") -> proceso++
+                        estado.contains("completad") || estado.contains("lista") -> completadas++
+                        else -> nuevas++
                     }
+                }
+
+                runOnUiThread {
+                    // Mapeamos los totales a los TextView de la pantalla del reloj
+                    findViewById<TextView>(R.id.tvNuevas)?.text = nuevas.toString()
+                    findViewById<TextView>(R.id.tvProceso)?.text = proceso.toString()
+                    findViewById<TextView>(R.id.tvListas)?.text = completadas.toString()
+
+                    // Si detectamos que hay más pedidos que antes, disparamos la notificación
+                    if (totalPedidosActuales in 1..<totalEnLaNube) {
+                        lanzarNotificacionReal()
+                    }
+                    totalPedidosActuales = totalEnLaNube
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

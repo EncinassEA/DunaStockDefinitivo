@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-08-11T02:41:21.458593100Z">
+        <DropdownSelection timestamp="2026-08-13T18:37:52.241717Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\amave\.android\avd\Pixel_7a.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\usuario 2\.android\avd\Wear_OS_Large_Round.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="dunastock">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-07-28T04:00:08.905052600Z">
+        <DropdownSelection timestamp="2026-08-13T18:04:57.936938Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\amave\.android\avd\Pixel_7a.avd" />
+              <DeviceId pluginId="Default" identifier="serial=127.0.0.1:21503;connection=b057558f" />
             </handle>
           </Target>
         </DropdownSelection>
