@@ -2,23 +2,23 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="app">
+      <SelectionState runConfigName="dunastock">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-08-11T02:41:21.458593100Z">
+        <DropdownSelection timestamp="2026-08-13T17:42:18.366153700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\amave\.android\avd\Pixel_7a.avd" />
+              <DeviceId pluginId="Default" identifier="serial=127.0.0.1:21513;connection=02c7c906" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="dunastock">
+      <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-07-28T04:00:08.905052600Z">
+        <DropdownSelection timestamp="2026-08-13T17:33:15.968457600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\amave\.android\avd\Pixel_7a.avd" />
+              <DeviceId pluginId="Default" identifier="serial=127.0.0.1:21513;connection=02c7c906" />
             </handle>
           </Target>
         </DropdownSelection>

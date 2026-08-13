@@ -163,12 +163,24 @@ class AdminUsuariosActivity : AppCompatActivity() {
     private fun actualizarUsuarioEnApi(usuario: Usuario, nuevoNombre: String, nuevoRol: String) {
         val queue = Volley.newRequestQueue(this)
 
-        // Empaquetamos los datos modificados
-        val jsonBody = JSONObject()
-        jsonBody.put("nombre", nuevoNombre)
-        jsonBody.put("correo", usuario.correo)
-        jsonBody.put("password_hash", usuario.password_hash)
-        jsonBody.put("rol", nuevoRol)
+        // 1. Empaquetamos los datos modificados con el "Blindaje" para C#
+        val jsonBody = JSONObject().apply {
+            val idNum = usuario.id.toInt()
+            put("id", idNum)
+            put("Id", idNum) // .NET exige el ID aquí adentro
+
+            put("nombre", nuevoNombre)
+            put("Nombre", nuevoNombre)
+
+            put("correo", usuario.correo)
+            put("Correo", usuario.correo)
+
+            put("password_hash", usuario.password_hash)
+            put("Password_hash", usuario.password_hash)
+
+            put("rol", nuevoRol)
+            put("Rol", nuevoRol)
+        }
 
         val request = JsonObjectRequest(Request.Method.PUT, "$API_URL/${usuario.id}", jsonBody,
             { response ->
@@ -176,7 +188,14 @@ class AdminUsuariosActivity : AppCompatActivity() {
                 cargarUsuarios()
             },
             { error ->
-                Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+                // 2. EL BYPASS PARA EL CÓDIGO 204 DE .NET
+                val response = error.networkResponse
+                if (response != null && (response.statusCode == 204 || response.statusCode == 200)) {
+                    Toast.makeText(this, "Usuario actualizado", Toast.LENGTH_SHORT).show()
+                    cargarUsuarios()
+                } else {
+                    Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+                }
             }
         )
         queue.add(request)

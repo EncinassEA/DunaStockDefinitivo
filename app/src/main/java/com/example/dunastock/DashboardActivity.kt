@@ -87,7 +87,6 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // ESTO ERA LO QUE FALTABA CORREGIR:
         cardHistorial.setOnClickListener {
             startActivity(Intent(this, HistorialActivity::class.java))
         }
@@ -113,17 +112,25 @@ class DashboardActivity : AppCompatActivity() {
                 try {
                     for (i in 0 until response.length()) {
                         val orden = response.getJSONObject(i)
-                        val estado = orden.getString("estado").lowercase()
-                        when (estado) {
-                            "pendiente" -> pendientes++
-                            "proceso" -> enProceso++
-                            "completado" -> completados++
+
+                        // Extraemos el texto, lo pasamos a minúsculas y cortamos espacios fantasma
+                        val estado = orden.getString("estado").lowercase().trim()
+
+                        // Usamos 'contains' para que los detecte a la fuerza sin importar ligeros errores de tipeo
+                        if (estado.contains("pendiente")) {
+                            pendientes++
+                        } else if (estado.contains("proceso")) {
+                            enProceso++
+                        } else if (estado.contains("completado")) {
+                            completados++
                         }
                     }
                     tvStatPendientes.text = pendientes.toString()
                     tvStatProceso.text = enProceso.toString()
                     tvStatCompletados.text = completados.toString()
-                } catch (e: JSONException) { e.printStackTrace() }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
             },
             {
                 tvStatPendientes.text = "0"
