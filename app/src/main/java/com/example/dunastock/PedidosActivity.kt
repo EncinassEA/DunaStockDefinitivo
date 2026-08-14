@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -40,8 +39,18 @@ class PedidosActivity : AppCompatActivity() {
         val btnRegresar = findViewById<ImageButton>(R.id.btnRegresar)
         btnRegresar.setOnClickListener { finish() }
 
-        val rol = intent.getStringExtra("ROL_USUARIO") ?: "operador"
+        // ==========================================
+        // TRADUCCIÓN DEL ROL PARA EL ADAPTADOR
+        // ==========================================
+        val rolCrudo = intent.getStringExtra("ROL_USUARIO") ?: "operador"
+        val rol = if (rolCrudo.contains("adm", ignoreCase = true)) {
+            "administrador"
+        } else {
+            "operador"
+        }
+
         nombreActual = intent.getStringExtra("NOMBRE_USUARIO") ?: "Usuario"
+        // ==========================================
 
         rvPedidos = findViewById(R.id.rvPedidos)
         btnNuevoPedido = findViewById(R.id.btnNuevoPedido)
@@ -96,11 +105,25 @@ class PedidosActivity : AppCompatActivity() {
                 val listaEquipo = mutableListOf<String>()
                 for (i in 0 until response.length()) {
                     val obj = response.getJSONObject(i)
-                    val nombre = obj.getString("nombre")
-                    val rol = obj.getString("rol").lowercase()
-                    listaEquipo.add("$nombre (${rol.replaceFirstChar { it.uppercase() }})")
+
+                    // Extraemos los datos
+                    val nombre = obj.optString("nombre", obj.optString("Nombre", "Usuario"))
+                    val rolCrudo = obj.optString("rol", obj.optString("Rol", "")).trim()
+
+                    // Buscamos las siglas reales que manda la API (ADM u OP)
+                    val rolFormateado = if (rolCrudo.contains("ADM", ignoreCase = true)) {
+                        "[Admin]"
+                    } else {
+                        "[Operador]"
+                    }
+
+                    listaEquipo.add("$rolFormateado $nombre")
                 }
-                val adapterOperadores = ArrayAdapter(this, android.R.layout.simple_list_item_1, listaEquipo)
+
+                // Filtramos duplicados
+                val listaSinDuplicados = listaEquipo.distinct()
+
+                val adapterOperadores = ArrayAdapter(this, android.R.layout.simple_list_item_1, listaSinDuplicados)
                 tvOperador.setAdapter(adapterOperadores)
             },
             { Toast.makeText(this, "Error al cargar la lista", Toast.LENGTH_SHORT).show() }
@@ -146,15 +169,25 @@ class PedidosActivity : AppCompatActivity() {
                         put("fecha_ingreso", fechaHoy)
                     }
 
-                    Volley.newRequestQueue(this).add(
-                        JsonObjectRequest(Request.Method.POST, API_URL, json,
-                            {
-                                Toast.makeText(this, "Pedido Creado", Toast.LENGTH_SHORT).show()
-                                cargarPedidos()
-                            },
-                            { Toast.makeText(this, "Error al crear", Toast.LENGTH_SHORT).show() }
-                        )
+                    // 1. Guardamos la petición en una variable
+                    val peticionCrear = JsonObjectRequest(Request.Method.POST, API_URL, json,
+                        {
+                            Toast.makeText(this, "Pedido Creado", Toast.LENGTH_SHORT).show()
+                            cargarPedidos()
+                        },
+                        { Toast.makeText(this, "Error al crear", Toast.LENGTH_SHORT).show() }
                     )
+
+                    // 2. Apagamos el auto-reintento de Volley dándole 10 segundos de espera
+                    peticionCrear.retryPolicy = com.android.volley.DefaultRetryPolicy(
+                        10000,
+                        0,
+                        com.android.volley.DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                    )
+
+                    // 3. Agregamos la petición configurada a la cola
+                    Volley.newRequestQueue(this).add(peticionCrear)
+
                 } else {
                     Toast.makeText(this, "Producto y Ubicación son obligatorios", Toast.LENGTH_SHORT).show()
                 }

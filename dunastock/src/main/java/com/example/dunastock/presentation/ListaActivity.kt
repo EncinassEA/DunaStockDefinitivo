@@ -36,13 +36,14 @@ class ListaActivity : Activity() {
                 for (i in 0 until arregloPedidos.length()) {
                     val obj = arregloPedidos.getJSONObject(i)
 
-                    // Extraemos las propiedades reales del JSON (ajusta los nombres según tu MockAPI)
-                    val idPedido = obj.optString("id", "0000")
-                    val estado = obj.optString("estado", "Pendiente")
-                    val cantidadItems = obj.optString("items", "1")
+                    // 1. Extraemos los datos intentando con minúsculas (formato común en APIs)
+                    val idPedido = obj.optString("id", obj.optString("Id", "00"))
+                    val estado = obj.optString("estado", obj.optString("Estado", "Pendiente"))
+                    val cantidad = obj.optString("cantidad", obj.optString("Cantidad", "1"))
+                    val producto = obj.optString("producto", obj.optString("Producto", "Producto sin nombre"))
 
-                    // Construimos la descripción dinámica para el smartwatch
-                    val detalleReal = "$estado • $cantidadItems items"
+                    // 2. Armamos el texto para que se vea como: "pendiente • 45 Chamoy Mega"
+                    val detalleReal = "$estado • $cantidad $producto"
 
                     listaVirtual.add(Pedido(idPedido, detalleReal))
                 }

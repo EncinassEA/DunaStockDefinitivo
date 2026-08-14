@@ -52,15 +52,24 @@ class DashboardActivity : AppCompatActivity() {
         tvStatProceso = findViewById(R.id.tvStatProceso)
         tvStatCompletados = findViewById(R.id.tvStatCompletados)
 
-        // Datos recibidos del Login
-        val rolUsuario = intent.getStringExtra("ROL_USUARIO") ?: "operador"
+        // ==========================================
+        // TRADUCCIÓN DEL ROL Y VISIBILIDAD
+        // ==========================================
+        val rolCrudo = intent.getStringExtra("ROL_USUARIO") ?: "operador"
         val nombreUsuario = intent.getStringExtra("NOMBRE_USUARIO") ?: "Usuario"
 
-        tvBienvenida.text = "¡Bienvenido, ${rolUsuario.replaceFirstChar { it.uppercase() }}!"
+        // Detectamos si es administrador buscando "adm"
+        val esAdmin = rolCrudo.contains("adm", ignoreCase = true)
 
-        if (rolUsuario == "operador") {
+        // Mejoramos el mensaje de bienvenida para que se vea profesional
+        val nombreRolBonito = if (esAdmin) "Administrador" else "Operador"
+        tvBienvenida.text = "¡Bienvenido, $nombreRolBonito!"
+
+        // Ocultamos la tarjeta si NO es administrador
+        if (!esAdmin) {
             cardAdmin.visibility = View.GONE
         }
+        // ==========================================
 
         // Menú lateral (Cerrar sesión)
         btnMenu.setOnClickListener { view ->
@@ -82,7 +91,8 @@ class DashboardActivity : AppCompatActivity() {
         // Acciones de las tarjetas
         cardOrdenes.setOnClickListener {
             val intent = Intent(this, PedidosActivity::class.java)
-            intent.putExtra("ROL_USUARIO", rolUsuario)
+            // Mandamos el rol original para que PedidosActivity haga sus propios filtros
+            intent.putExtra("ROL_USUARIO", rolCrudo)
             intent.putExtra("NOMBRE_USUARIO", nombreUsuario)
             startActivity(intent)
         }
